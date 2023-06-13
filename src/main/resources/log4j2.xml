@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <!-- <File name="file" fileName="${jboss.server.log.dir}/appTresSeisTres.log">  -->
+        <File name="file" fileName="C:/logsJava/taskPagos.log">
+            <PatternLayout>
+                <Pattern>%d{dd/MM/yyyy HH:mm:ss} [%t] %-5p %c{1}:%L - %m%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.maesquiv" level="debug" additivity="false">
+            <AppenderRef ref="file"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="console"/>
+        </Root>
+    </Loggers>
+</Configuration>

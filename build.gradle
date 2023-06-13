@@ -1,0 +1,66 @@
+plugins {
+	id 'java'
+	id 'application'
+	id 'war'
+}
+
+group = 'com.maesquiv.servlet'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.quartz-scheduler:quartz:2.3.2'
+	//implementation 'javax.servlet:javax.servlet-api:4.0.1'
+	implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+	implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
+	implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
+	implementation 'com.newrelic.agent.java:newrelic-agent:8.0.0'
+	implementation 'com.newrelic.agent.java:newrelic-api:8.0.0'
+	implementation 'org.apache.commons:commons-csv:1.8'
+	implementation 'commons-net:commons-net:3.8.0'
+	
+	implementation 'net.sf.jasperreports:jasperreports:6.17.0'
+	implementation 'com.lowagie:itext:2.1.7'
+	
+	implementation 'org.apache.poi:poi:4.1.2'
+	implementation 'org.apache.poi:poi-ooxml:4.1.2'
+}
+
+task generateConfigProperties {
+    def environment = project.findProperty('env') ?: 'dev' // Valor predeterminado: dev
+    def propertiesFile = "src/main/resources/${environment}-config.properties"
+    
+    def configFileContent = new StringBuilder()
+    
+    file(propertiesFile).withReader { reader ->
+        configFileContent << reader.text
+    }
+    
+    def configPropertiesFile = file("src/main/resources/config.properties")
+    configPropertiesFile.text = configFileContent.toString()
+    
+    println "Archivo config.properties generado para el ambiente: $environment"
+}
+
+
+task buildWar(type: War, dependsOn: generateConfigProperties) {
+	def environment = project.hasProperty('env') ? project.env : 'dev'
+	print("El ambiente es::" + environment)
+    
+	from('src/main/webapp')
+	webInf {
+		from('src/main/webapp/WEB-INF') {
+			include '**/*.xml'
+			include '**/*.properties'
+		}
+	}
+	archiveFileName = "${project.name}.war"
+	destinationDirectory = file("build/dist")
+	classpath = sourceSets.main.runtimeClasspath
+	duplicatesStrategy = 'EXCLUDE'
+}
+
