@@ -28,7 +28,10 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfGState;
+import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfShading;
 import com.lowagie.text.pdf.PdfStamper;
 
 
@@ -75,7 +78,7 @@ public class ReportBuilderConsoleRunner {
 	private static void addWatermarkToPDF(String inputPath, String watermarkImagePath) {
         try {
             PdfReader reader = new PdfReader(inputPath);
-            PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("C:/reportes/reporteConMarca.pdf"));
+            PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("C:/reportes/reporteConMarcaDos.pdf"));
             Image watermarkImage = Image.getInstance(watermarkImagePath);
 
             int totalPages = reader.getNumberOfPages();
@@ -90,6 +93,13 @@ public class ReportBuilderConsoleRunner {
                 y = (pageSize.getTop() + pageSize.getBottom()) / 2;
 
                 content = stamper.getUnderContent(pageNumber);
+                
+                PdfGState gs = new PdfGState();
+                gs.setFillOpacity(0.2f);
+                gs.setStrokeOpacity(0.2f);
+                content.setGState(gs);
+
+                
                 content.addImage(watermarkImage, 200, 0, 0, 200, x, y, false);
             }
 
